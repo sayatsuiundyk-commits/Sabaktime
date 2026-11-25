@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Сабақ және Тест порталы</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --success: #059669;
+      --error: #dc2626;
+      --border: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eef2ff;
+      color: var(--primary);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 1.35rem;
+      margin-bottom: 12px;
+    }
+
+    .formula-box {
+      background: #f1f5f9;
+      border-left: 4px solid var(--primary);
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 14px 0;
+      font-weight: 600;
+    }
+
+    .question {
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .question:last-of-type {
+      border-bottom: none;
+    }
+
+    .question p {
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .option {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: 0.2s;
+    }
+
+    .option:hover {
+      border-color: var(--primary);
+    }
+
+    .option.selected {
+      background: #eef2ff;
+      border-color: var(--primary);
+      font-weight: 600;
+    }
+
+    .option.correct {
+      background: #ecfdf5;
+      border-color: var(--success);
+      color: var(--success);
+    }
+
+    .option.wrong {
+      background: #fef2f2;
+      border-color: var(--error);
+      color: var(--error);
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 14px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--primary-hover);
+    }
+
+    #result {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: 700;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>OquHub</h1>
+      <p>Қысқа конспект және жылдам өзін-өзі тексеру</p>
+    </header>
+
+    <!-- 1-БӨЛІМ: САБАҚ КОНСПЕКТІСІ -->
+    <section class="card">
+      <span class="badge">1-сабақ • Физика / Информатика</span>
+      <h2>Жылдамдық және деректер көлемі</h2>
+      <p>
+        Күнделікті өмірде интернет жылдамдығы <strong>Mbps (мегабит/сек)</strong> арқылы өлшенеді, 
+        ал файлдардың салмағы <strong>MB (мегабайт)</strong> түрінде көрсетіледі.
+      </p>
+      <div class="formula-box">
+        Есте сақта: 1 Байтымыз = 8 Битке тең. Сондықтан 80 Mbps = 10 MB/s.
+      </div>
+      <p>
+        Яғни интернет жылдамдығын мегабайтқа айналдыру үшін санды <strong>8-ге бөлу</strong> жеткілікті.
+      </p>
+    </section>
+
+    <!-- 2-БӨЛІМ: ИНТЕРАКТИВТІ ТЕСТ -->
+    <section class="card">
+      <span class="badge">Бекіту тесті</span>
+      <h2>Біліміңді тексер</h2>
+      <div id="quiz-container"></div>
+      <button class="btn" onclick="checkQuiz()">Нәтижені тексеру</button>
+      <div id="result"></div>
+    </section>
+  </div>
+
+  <script>
+    // Тест сұрақтарын осы жерден оңай өзгертіп, көбейте аласың
+    const questions = [
+      {
+        q: "1. 1 байт неше битке тең?",
+        options: ["4 бит", "8 бит", "16 бит", "1024 бит"],
+        answer: 1 // 0-ден бастап саналады (8 бит = 1)
+      },
+      {
+        q: "2. Егер интернет жылдамдығы 160 Mbps болса, секундтық жүктеу жылдамдығы қанша MB/s?",
+        options: ["160 MB/s", "80 MB/s", "20 MB/s", "10 MB/s"],
+        answer: 2 // 20 MB/s = 2
+      },
+      {
+        q: "3. GitHub Pages-те басты бет файлы қалай аталуы керек?",
+        options: ["main.txt", "site.doc", "index.html", "home.css"],
+        answer: 2 // index.html = 2
+      }
+    ];
+
+    const userAnswers = {};
+    const quizContainer = document.getElementById("quiz-container");
+
+    function renderQuiz() {
+      quizContainer.innerHTML = "";
+      questions.forEach((item, qIndex) => {
+        const qDiv = document.createElement("div");
+        qDiv.className = "question";
+
+        const title = document.createElement("p");
+        title.textContent = item.q;
+        qDiv.appendChild(title);
+
+        item.options.forEach((opt, oIndex) => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.textContent = opt;
+          btn.dataset.q = qIndex;
+          btn.dataset.o = oIndex;
+
+          btn.onclick = () => {
+            userAnswers[qIndex] = oIndex;
+            document.querySelectorAll(`.option[data-q="${qIndex}"]`).forEach(b => {
+              b.classList.remove("selected");
+            });
+            btn.classList.add("selected");
+          };
+
+          qDiv.appendChild(btn);
+        });
+
+        quizContainer.appendChild(qDiv);
+      });
+    }
+
+    function checkQuiz() {
+      let score = 0;
+
+      questions.forEach((item, qIndex) => {
+        const buttons = document.querySelectorAll(`.option[data-q="${qIndex}"]`);
+        buttons.forEach((btn, oIndex) => {
+          btn.classList.remove("selected", "correct", "wrong");
+          if (oIndex === item.answer) {
+            btn.classList.add("correct");
+          } else if (userAnswers[qIndex] === oIndex) {
+            btn.classList.add("wrong");
+          }
+        });
+
+        if (userAnswers[qIndex] === item.answer) {
+          score++;
+        }
+      });
+
+      const resultBox = document.getElementById("result");
+      resultBox.style.display = "block";
+      resultBox.style.background = score === questions.length ? "#ecfdf5" : "#eef2ff";
+      resultBox.style.color = score === questions.length ? "#059669" : "#4f46e5";
+      resultBox.textContent = `Сенің нәтижең: ${questions.length} сұрақтан ${score} дұрыс!`;
+    }
+
+    renderQuiz();
+  </script>
+
+</body>
+</html>
